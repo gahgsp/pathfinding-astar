@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core;
+using Finders;
 using UnityEngine;
 
 /// <summary>
@@ -19,11 +21,13 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Material _goalMaterial;
     [SerializeField] private Material _pathMaterial;
     [SerializeField] private Material _obstacleMaterial;
-
+    
     // Private properties.
     private GameObject[,] _nodes;
     private bool _isSelectingStartPoint = true;
     private bool _allowDiagonals = false;
+
+    private int _algorithmOption = 0;
 
     #region Singleton
     private static GridManager _instance;
@@ -56,30 +60,25 @@ public class GridManager : MonoBehaviour
     /// </summary>
     public void FindPath()
     {
-        var foundPath = AStar.FindPath(
-            GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
-            GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>());
-        if (foundPath != null)
+        if (_algorithmOption == 0)
         {
-            DrawPath(foundPath);
+            DrawPath(AStar.FindPath(
+                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
+                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>()));
+        }
+        else
+        {
+            DrawPath(Dijkstra.FindPath(_nodes, 
+                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
+                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>()));
         }
     }
 
-    /// <summary>
-    /// Draws the found path by the A* algorithm on the map.
-    /// </summary>
-    /// <param name="foundPath">The found path by the A* algorithm.</param>
-    private void DrawPath(List<Node> foundPath)
+    public void OnSelectAlgorithm(int option)
     {
-        foreach (var node in foundPath)
-        {
-            if (!node.IsStartNode() && !node.IsGoalNode())
-            {
-                node.GetComponent<MeshRenderer>().material = _pathMaterial;
-            }
-        }
+        _algorithmOption = option;
     }
-
+    
     /// <summary>
     /// Returns all the neighbors nodes of the current node passed by parameter.
     /// </summary>
@@ -160,6 +159,23 @@ public class GridManager : MonoBehaviour
                 var positionToSpawnNode =  new Vector3(x * 1f + (x * 0.05f), 0f, z * 1f + (z * 0.05f));
                 var newNode = Instantiate(_node, positionToSpawnNode, Quaternion.identity, transform);
                 _nodes[x, z] = newNode;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Draws the found path by the A* algorithm on the map.
+    /// </summary>
+    /// <param name="foundPath">The found path by the A* algorithm.</param>
+    private void DrawPath(List<Node> foundPath)
+    {
+        foreach (var node in foundPath)
+        {
+            if (!node.IsStartNode() && !node.IsGoalNode())
+            {
+                node.IsVisited = false;
+                node.IsFinished = false;
+                node.GetComponent<MeshRenderer>().material = _pathMaterial;
             }
         }
     }
