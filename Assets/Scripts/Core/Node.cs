@@ -6,14 +6,14 @@ namespace Core
     /// <summary>
     /// Represents a single Node in the grid.
     /// </summary>
-    public class Node : MonoBehaviour, IComparable
+    public class Node : MonoBehaviour, IComparable<Node>
     {
 
         [SerializeField] private Material _visitedMaterial;
         [SerializeField] private Material _finishedMaterial;
 
         private MeshRenderer _meshRenderer;
-        
+
         private void Start()
         {
             _meshRenderer = GetComponent<MeshRenderer>();
@@ -37,13 +37,7 @@ namespace Core
         {
             IsObstacle = true;
         }
-    
-        public int CompareTo(object obj)
-        {
-            var node = (Node) obj;
-            return EstimatedCost < node.EstimatedCost ? -1 : EstimatedCost > node.EstimatedCost ? 1 : 0;
-        }
-
+        
         public bool IsStartNode()
         {
             return gameObject.CompareTag("Start");
@@ -53,10 +47,10 @@ namespace Core
         {
             return gameObject.CompareTag("Goal");
         }
-    
-        public float TotalCost { get; set; }
 
-        public float EstimatedCost { get; set; }
+        public float TotalCost { get; set; } // G
+
+        public float EstimatedCost { get; set; } // F
 
         public Node Parent { get; set; }
 
@@ -67,5 +61,9 @@ namespace Core
         public bool IsVisited { get; set; }
     
         public bool IsFinished { get; set; }
+        public int CompareTo(Node other)
+        {
+            return EstimatedCost < other.EstimatedCost ? -1 : EstimatedCost > other.EstimatedCost ? 1 : 0;
+        }
     }
 }

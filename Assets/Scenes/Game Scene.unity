@@ -288,6 +288,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Dijkstra
       m_Image: {fileID: 0}
+    - m_Text: Breadth-First Search
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

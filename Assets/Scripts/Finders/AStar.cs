@@ -11,7 +11,7 @@ namespace Finders
     public static class AStar
     {
         private static HashSet<Node> _closedSet;
-        private static PriorityQueue _openSet;
+        private static PriorityQueue<Node> _openSet;
 
         /// <summary>
         /// Finds the most optimized path based on the A* algorithm.
@@ -19,13 +19,14 @@ namespace Finders
         public static List<Node> FindPath(Node start, Node goal)
         {
             // Initializing the lists
-            _openSet = new PriorityQueue();
+            _openSet = new PriorityQueue<Node>(Comparer<Node>.Create(((aNode, bNode) =>
+                aNode.EstimatedCost < bNode.EstimatedCost ? -1 : aNode.EstimatedCost > bNode.EstimatedCost ? 1 : 0)));
             _closedSet = new HashSet<Node>();
         
             // Calculates the start node values and add to the open set
             start.TotalCost = 0f;
             start.EstimatedCost = Heuristic.Manhattan(start, goal);
-            _openSet.Add(start);
+            _openSet.Enqueue(start);
         
             Node currNode = null;
             while (_openSet.Length != 0)
@@ -40,10 +41,7 @@ namespace Finders
                 {
                     return Util.ReconstructPath(currNode);
                 }
-
-                _openSet.Remove(currNode);
-                _closedSet.Add(currNode);
-
+                
                 var neighbors = GridManager.Instance.GetNeighborsNodes(currNode);
                 for (var i = 0; i < neighbors.Count; i++)
                 {
@@ -56,7 +54,7 @@ namespace Finders
                         neighbor.EstimatedCost = neighborTotalCost + Heuristic.Manhattan(neighbor, goal) + (neighbor.IsDiagonalNeighbor ? 1 : 2);
                         if (!_openSet.Contains(neighbor))
                         {
-                            _openSet.Add(neighbor);
+                            _openSet.Enqueue(neighbor);
                         }
                         if (neighbor != start && neighbor != goal)
                         {
@@ -64,6 +62,10 @@ namespace Finders
                         }
                     }
                 }
+                
+                _openSet.Remove(currNode);
+                _closedSet.Add(currNode);
+                
             }
 
             if (currNode == goal) return Util.ReconstructPath(currNode);

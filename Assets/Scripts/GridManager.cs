@@ -66,9 +66,15 @@ public class GridManager : MonoBehaviour
                 GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
                 GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>()));
         }
-        else
+        else if (_algorithmOption == 1)
         {
             DrawPath(Dijkstra.FindPath(_nodes, 
+                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
+                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>()));
+        }
+        else
+        {
+            DrawPath(BreadthFirstSearch.FindPath(
                 GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
                 GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>()));
         }
