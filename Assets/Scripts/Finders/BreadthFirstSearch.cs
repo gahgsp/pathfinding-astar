@@ -10,12 +10,9 @@ namespace Finders
 
         private static HashSet<Node> _discoveredSet;
         private static Queue<Node> _openSet;
-        private static List<Node> _foundPath;
         
         public static IEnumerator FindPath(Node start, Node goal, float timeStep)
         {
-            _foundPath = new List<Node>();
-            
             _openSet = new Queue<Node>();
             _discoveredSet = new HashSet<Node> {start};
 
@@ -32,8 +29,7 @@ namespace Finders
 
                 if (currentNode == goal)
                 {
-                    Util.ReconstructPath(currentNode, _foundPath);
-                    Util.DrawPath(_foundPath);
+                    Util.ReconstructPath(currentNode);
                     yield break;
                 }
 
@@ -59,8 +55,7 @@ namespace Finders
             
             if (currentNode == goal)
             {
-                Util.ReconstructPath(currentNode, _foundPath);
-                Util.DrawPath(_foundPath);
+                Util.ReconstructPath(currentNode);
             }
         
             Debug.LogError("It was not possible to find a path!");

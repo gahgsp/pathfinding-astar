@@ -8,12 +8,9 @@ namespace Finders
    public static class Dijkstra
    {
       private static PriorityQueue<Node> _unexploredSet;
-      private static List<Node> _foundPath;
 
       public static IEnumerator FindPath(GameObject[,] nodes, Node start, Node goal, float timeStep)
       {
-         _foundPath = new List<Node>();
-         
          _unexploredSet = new PriorityQueue<Node>(Comparer<Node>.Create(((aNode, bNode) =>
             aNode.TotalCost < bNode.TotalCost ? -1 : aNode.TotalCost > bNode.TotalCost ? 1 : 0)));
 
@@ -34,8 +31,7 @@ namespace Finders
             
             if (currentNode == goal)
             {
-               Util.ReconstructPath(currentNode, _foundPath);
-               Util.DrawPath(_foundPath);
+               Util.ReconstructPath(currentNode);
                yield break;
             }
             
@@ -71,8 +67,7 @@ namespace Finders
       
          if (currentNode == goal)
          {
-            Util.ReconstructPath(currentNode, _foundPath);
-            Util.DrawPath(_foundPath);
+            Util.ReconstructPath(currentNode);
             yield break;
          }
         

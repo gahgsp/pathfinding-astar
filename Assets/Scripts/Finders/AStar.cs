@@ -13,16 +13,12 @@ namespace Finders
     {
         private static HashSet<Node> _closedSet;
         private static PriorityQueue<Node> _openSet;
-        private static List<Node> _foundPath;
         
         /// <summary>
         /// Finds the most optimized path based on the A* algorithm.
         /// </summary>
         public static IEnumerator FindPath(Node start, Node goal, float timeStep)
         {
-            // Initializing the path list
-            _foundPath = new List<Node>();
-            
             // Initializing the sets
             _openSet = new PriorityQueue<Node>(Comparer<Node>.Create(((aNode, bNode) =>
                 aNode.EstimatedCost < bNode.EstimatedCost ? -1 : aNode.EstimatedCost > bNode.EstimatedCost ? 1 : 0)));
@@ -44,8 +40,7 @@ namespace Finders
             
                 if (currNode == goal)
                 {
-                    Util.ReconstructPath(currNode, _foundPath);
-                    Util.DrawPath(_foundPath);
+                    Util.ReconstructPath(currNode);
                     yield break;
                 }
                 
@@ -78,8 +73,7 @@ namespace Finders
 
             if (currNode == goal)
             {
-                Util.ReconstructPath(currNode, _foundPath);
-                Util.DrawPath(_foundPath);
+                Util.ReconstructPath(currNode);
             }
         
             Debug.LogError("It was not possible to find a path!");

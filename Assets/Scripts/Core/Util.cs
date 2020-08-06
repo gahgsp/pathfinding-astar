@@ -5,18 +5,19 @@ namespace Core
 {
     public static class Util 
     {
-        public static void ReconstructPath(Node node, List<Node> path)
+        public static void ReconstructPath(Node node)
         {
-            // TODO: Remove this path from params. The draw method is already here.
+            var path = new List<Node>();
             while (node != null)
             {
                 path.Add(node);
                 node = node.Parent;
             }
             path.Reverse();
+            DrawPath(path);
         }
         
-        public static void DrawPath(List<Node> foundPath)
+        private static void DrawPath(List<Node> foundPath)
         {
             foreach (var node in foundPath)
             {
