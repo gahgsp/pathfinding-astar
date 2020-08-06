@@ -12,6 +12,7 @@ public class GridManager : MonoBehaviour
     [Header("// Grid Configuration")]
     [SerializeField] private int _length = 10; // X axis
     [SerializeField] private int _width = 10; // Z axis
+    [SerializeField] private float _timeStep = 0.1f;
     
     [Header("// Node")]
     [SerializeField] private GameObject _node;
@@ -22,11 +23,12 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Material _pathMaterial;
     [SerializeField] private Material _obstacleMaterial;
     
+    public Material PathMaterial => _pathMaterial;
+    
     // Private properties.
     private GameObject[,] _nodes;
     private bool _isSelectingStartPoint = true;
     private bool _allowDiagonals = false;
-
     private int _algorithmOption = 0;
 
     #region Singleton
@@ -43,8 +45,8 @@ public class GridManager : MonoBehaviour
         }
     }
     #endregion
-    
-    void Start()
+
+    private void Start()
     {
         _nodes = new GameObject[_length, _width];
         GenerateMap();
@@ -60,26 +62,33 @@ public class GridManager : MonoBehaviour
     /// </summary>
     public void FindPath()
     {
-        if (_algorithmOption == 0)
+        var startNode = GameObject.FindGameObjectWithTag("Start").GetComponent<Node>();
+        var goalNode = GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>();
+
+        if (startNode == null || goalNode == null)
         {
-            StartCoroutine(AStar.FindPath(
-                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
-                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>(), 0.1f));
+            Debug.LogError("No Start/Goal node defined!");
+            return;
         }
-        else if (_algorithmOption == 1)
+        
+        switch (_algorithmOption)
         {
-            StartCoroutine(Dijkstra.FindPath(_nodes,
-                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(),
-                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>(), 0.1f));
-        }
-        else
-        {
-            StartCoroutine(BreadthFirstSearch.FindPath(
-                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(),
-                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>(), 0.1f));
+            case 0:
+                StartCoroutine(AStar.FindPath(startNode, goalNode, _timeStep));
+                break;
+            case 1:
+                StartCoroutine(Dijkstra.FindPath(_nodes, startNode, goalNode, _timeStep));
+                break;
+            default:
+                StartCoroutine(BreadthFirstSearch.FindPath(startNode, goalNode, _timeStep));
+                break;
         }
     }
 
+    /// <summary>
+    /// Event called when an algorithm is selected on the UI.
+    /// </summary>
+    /// <param name="option">The index of the algorithm option presented to the user.</param>
     public void OnSelectAlgorithm(int option)
     {
         _algorithmOption = option;
@@ -168,6 +177,14 @@ public class GridManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Event called when the UI Checkbox is checked / unchecked.
+    /// </summary>
+    public void OnAllowDiagonals()
+    {
+        _allowDiagonals = !_allowDiagonals;
+    }
+    
+    /// <summary>
     /// Generates a grid of Node entities based on the configurations provided for the size of the map.
     /// </summary>
     private void GenerateMap()
@@ -247,11 +264,4 @@ public class GridManager : MonoBehaviour
         }
         GenerateMap();
     }
-
-    public void OnAllowDiagonals()
-    {
-        _allowDiagonals = !_allowDiagonals;
-    }
-
-    public Material PathMaterial => _pathMaterial;
 }
