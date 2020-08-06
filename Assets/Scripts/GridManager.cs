@@ -91,51 +91,65 @@ public class GridManager : MonoBehaviour
     /// <param name="node">The current node that will be used to find it's neighbors.</param>
     public List<Node> GetNeighborsNodes(Node node)
     {
-        // TODO: Neighbor order!
         var nodeNeighbors = new List<Node>();
         var nodePosition = node.transform.position;
-        var nodeColumn = (int) (nodePosition.x);
         var nodeRow = (int) (nodePosition.z);
-        
-        if (nodeColumn < _length - 1) {
-            nodeNeighbors.Add(_nodes[nodeColumn + 1, nodeRow].GetComponent<Node>());
-        }
-        if (nodeColumn > 0) {
-            nodeNeighbors.Add(_nodes[nodeColumn - 1, nodeRow].GetComponent<Node>());
-        }
-        if (nodeRow < _width - 1) {
-            nodeNeighbors.Add(_nodes[nodeColumn, nodeRow + 1].GetComponent<Node>());
-        }
-        if (nodeRow > 0) {
-            nodeNeighbors.Add(_nodes[nodeColumn, nodeRow - 1].GetComponent<Node>());
+        var nodeColumn = (int) (nodePosition.x);
+
+        // Top
+        if (nodeRow < _width - 1)
+        {
+            nodeNeighbors.Add(_nodes[nodeRow + 1, nodeColumn].GetComponent<Node>());
         }
 
+        // Right
+        if (nodeColumn < _length - 1)
+        {
+            nodeNeighbors.Add(_nodes[nodeRow, nodeColumn + 1].GetComponent<Node>());
+        }
+        
+        // Bottom
+        if (nodeRow > 0)
+        {
+            nodeNeighbors.Add(_nodes[nodeRow - 1, nodeColumn].GetComponent<Node>());
+        }
+
+        // Left
+        if (nodeColumn > 0)
+        {
+            nodeNeighbors.Add(_nodes[nodeRow, nodeColumn - 1].GetComponent<Node>());
+        }
+        
         if (_allowDiagonals)
         {
-            if (nodeColumn > 0 && nodeRow > 0)
+            // Top Left Diagonal
+            if (nodeRow < _width -1 && nodeColumn > 0)
             {
-                var diagonalNode = _nodes[nodeColumn - 1, nodeRow - 1].GetComponent<Node>();
+                var diagonalNode = _nodes[nodeRow + 1, nodeColumn - 1].GetComponent<Node>();
                 diagonalNode.IsDiagonalNeighbor = true;
                 nodeNeighbors.Add(diagonalNode);
             }
-
-            if (nodeColumn < _length - 1 && nodeRow > 0)
+            
+            // Top Right Diagonal
+            if (nodeRow < _width - 1 && nodeColumn < _length - 1)
             {
-                var diagonalNode = _nodes[nodeColumn + 1, nodeRow - 1].GetComponent<Node>();
+                var diagonalNode = _nodes[nodeRow + 1, nodeColumn + 1].GetComponent<Node>();
                 diagonalNode.IsDiagonalNeighbor = true;
                 nodeNeighbors.Add(diagonalNode);
             }
-
-            if (nodeColumn > 0 && nodeRow < _width - 1)
+            
+            // Bottom Right Diagonal
+            if (nodeRow > 0 && nodeColumn < _length - 1)
             {
-                var diagonalNode = _nodes[nodeColumn - 1, nodeRow + 1].GetComponent<Node>();
+                var diagonalNode = _nodes[nodeRow - 1, nodeColumn + 1].GetComponent<Node>();
                 diagonalNode.IsDiagonalNeighbor = true;
                 nodeNeighbors.Add(diagonalNode);
             }
-
-            if (nodeColumn < _length - 1 && nodeRow < _width - 1)
+            
+            // Bottom Left Diagonal
+            if (nodeRow > 0 && nodeColumn > 0)
             {
-                var diagonalNode = _nodes[nodeColumn + 1, nodeRow + 1].GetComponent<Node>();
+                var diagonalNode = _nodes[nodeRow - 1, nodeColumn - 1].GetComponent<Node>();
                 diagonalNode.IsDiagonalNeighbor = true;
                 nodeNeighbors.Add(diagonalNode);
             }
@@ -159,13 +173,14 @@ public class GridManager : MonoBehaviour
     private void GenerateMap()
     {
         Array.Clear(_nodes, 0, _nodes.Length);
-        for (var x = 0; x < _length; x++)
+        for (var z = 0; z < _length; z++)
         {
-            for (var z = 0; z < _width; z++)
+            for (var x = 0; x < _width; x++)
             {
                 var positionToSpawnNode =  new Vector3(x * 1f + (x * 0.05f), 0f, z * 1f + (z * 0.05f));
                 var newNode = Instantiate(_node, positionToSpawnNode, Quaternion.identity, transform);
-                _nodes[x, z] = newNode;
+                newNode.name = "Node: [" + z + "," + x + "]";
+                _nodes[z, x] = newNode;
             }
         }
     }
