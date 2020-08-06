@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Core;
 using UnityEngine;
 
@@ -7,9 +8,12 @@ namespace Finders
    public static class Dijkstra
    {
       private static PriorityQueue<Node> _unexploredSet;
+      private static List<Node> _foundPath;
 
-      public static List<Node> FindPath(GameObject[,] nodes, Node start, Node goal)
+      public static IEnumerator FindPath(GameObject[,] nodes, Node start, Node goal, float timeStep)
       {
+         _foundPath = new List<Node>();
+         
          _unexploredSet = new PriorityQueue<Node>(Comparer<Node>.Create(((aNode, bNode) =>
             aNode.TotalCost < bNode.TotalCost ? -1 : aNode.TotalCost > bNode.TotalCost ? 1 : 0)));
 
@@ -23,13 +27,16 @@ namespace Finders
             }
          }
 
+         Node currentNode = null;
          while (_unexploredSet.Length > 0)
          {
-            var currentNode = _unexploredSet.Peek();
+            currentNode = _unexploredSet.Peek();
             
             if (currentNode == goal)
             {
-               return Util.ReconstructPath(currentNode);
+               Util.ReconstructPath(currentNode, _foundPath);
+               Util.DrawPath(_foundPath);
+               yield break;
             }
             
             if (currentNode != start && currentNode != goal)
@@ -56,11 +63,21 @@ namespace Finders
                } 
             }
             
+            yield return new WaitForSeconds(timeStep);
+            
             _unexploredSet.Remove(currentNode);
             
          }
       
-         return null;
+         if (currentNode == goal)
+         {
+            Util.ReconstructPath(currentNode, _foundPath);
+            Util.DrawPath(_foundPath);
+            yield break;
+         }
+        
+         Debug.LogError("It was not possible to find a path!");
+         yield return null;
       }
    }
 }

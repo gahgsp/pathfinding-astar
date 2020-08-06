@@ -62,21 +62,21 @@ public class GridManager : MonoBehaviour
     {
         if (_algorithmOption == 0)
         {
-            DrawPath(AStar.FindPath(
+            StartCoroutine(AStar.FindPath(
                 GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
-                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>()));
+                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>(), 0.1f));
         }
         else if (_algorithmOption == 1)
         {
-            DrawPath(Dijkstra.FindPath(_nodes, 
-                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
-                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>()));
+            StartCoroutine(Dijkstra.FindPath(_nodes,
+                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(),
+                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>(), 0.1f));
         }
         else
         {
-            DrawPath(BreadthFirstSearch.FindPath(
-                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(), 
-                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>()));
+            StartCoroutine(BreadthFirstSearch.FindPath(
+                GameObject.FindGameObjectWithTag("Start").GetComponent<Node>(),
+                GameObject.FindGameObjectWithTag("Goal").GetComponent<Node>(), 0.1f));
         }
     }
 
@@ -91,6 +91,7 @@ public class GridManager : MonoBehaviour
     /// <param name="node">The current node that will be used to find it's neighbors.</param>
     public List<Node> GetNeighborsNodes(Node node)
     {
+        // TODO: Neighbor order!
         var nodeNeighbors = new List<Node>();
         var nodePosition = node.transform.position;
         var nodeColumn = (int) (nodePosition.x);
@@ -170,23 +171,6 @@ public class GridManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Draws the found path by the A* algorithm on the map.
-    /// </summary>
-    /// <param name="foundPath">The found path by the A* algorithm.</param>
-    private void DrawPath(List<Node> foundPath)
-    {
-        foreach (var node in foundPath)
-        {
-            if (!node.IsStartNode() && !node.IsGoalNode())
-            {
-                node.IsVisited = false;
-                node.IsFinished = false;
-                node.GetComponent<MeshRenderer>().material = _pathMaterial;
-            }
-        }
-    }
-    
-    /// <summary>
     /// Responsible to listen to click events on the mouse.
     /// </summary>
     private void OnNodeClick()
@@ -253,4 +237,6 @@ public class GridManager : MonoBehaviour
     {
         _allowDiagonals = !_allowDiagonals;
     }
+
+    public Material PathMaterial => _pathMaterial;
 }

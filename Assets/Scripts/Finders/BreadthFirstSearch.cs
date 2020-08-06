@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Core;
+using UnityEngine;
 
 namespace Finders
 {
@@ -8,17 +10,21 @@ namespace Finders
 
         private static HashSet<Node> _discoveredSet;
         private static Queue<Node> _openSet;
+        private static List<Node> _foundPath;
         
-        public static List<Node> FindPath(Node start, Node goal)
+        public static IEnumerator FindPath(Node start, Node goal, float timeStep)
         {
+            _foundPath = new List<Node>();
+            
             _openSet = new Queue<Node>();
             _discoveredSet = new HashSet<Node> {start};
 
             _openSet.Enqueue(start);
 
+            Node currentNode = null;
             while (_openSet.Count > 0)
             {
-                var currentNode = _openSet.Dequeue();
+                currentNode = _openSet.Dequeue();
                 if (currentNode != start && currentNode != goal)
                 {
                     currentNode.IsFinished = true;
@@ -26,7 +32,9 @@ namespace Finders
 
                 if (currentNode == goal)
                 {
-                    return Util.ReconstructPath(currentNode);
+                    Util.ReconstructPath(currentNode, _foundPath);
+                    Util.DrawPath(_foundPath);
+                    yield break;
                 }
 
                 var neighbors = GridManager.Instance.GetNeighborsNodes(currentNode);
@@ -44,9 +52,19 @@ namespace Finders
                         }
                     }
                 }
+                
+                yield return new WaitForSeconds(timeStep);
+                
             }
             
-            return null;
+            if (currentNode == goal)
+            {
+                Util.ReconstructPath(currentNode, _foundPath);
+                Util.DrawPath(_foundPath);
+            }
+        
+            Debug.LogError("It was not possible to find a path!");
+            yield return null;
         }
     }
 }

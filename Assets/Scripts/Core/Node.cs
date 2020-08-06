@@ -61,6 +61,7 @@ namespace Core
         public bool IsVisited { get; set; }
     
         public bool IsFinished { get; set; }
+        
         public int CompareTo(Node other)
         {
             return EstimatedCost < other.EstimatedCost ? -1 : EstimatedCost > other.EstimatedCost ? 1 : 0;

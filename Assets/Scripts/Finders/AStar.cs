@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Core;
 using UnityEngine;
 
@@ -12,13 +13,17 @@ namespace Finders
     {
         private static HashSet<Node> _closedSet;
         private static PriorityQueue<Node> _openSet;
-
+        private static List<Node> _foundPath;
+        
         /// <summary>
         /// Finds the most optimized path based on the A* algorithm.
         /// </summary>
-        public static List<Node> FindPath(Node start, Node goal)
+        public static IEnumerator FindPath(Node start, Node goal, float timeStep)
         {
-            // Initializing the lists
+            // Initializing the path list
+            _foundPath = new List<Node>();
+            
+            // Initializing the sets
             _openSet = new PriorityQueue<Node>(Comparer<Node>.Create(((aNode, bNode) =>
                 aNode.EstimatedCost < bNode.EstimatedCost ? -1 : aNode.EstimatedCost > bNode.EstimatedCost ? 1 : 0)));
             _closedSet = new HashSet<Node>();
@@ -27,7 +32,7 @@ namespace Finders
             start.TotalCost = 0f;
             start.EstimatedCost = Heuristic.Manhattan(start, goal);
             _openSet.Enqueue(start);
-        
+            
             Node currNode = null;
             while (_openSet.Length != 0)
             {
@@ -39,7 +44,9 @@ namespace Finders
             
                 if (currNode == goal)
                 {
-                    return Util.ReconstructPath(currNode);
+                    Util.ReconstructPath(currNode, _foundPath);
+                    Util.DrawPath(_foundPath);
+                    yield break;
                 }
                 
                 var neighbors = GridManager.Instance.GetNeighborsNodes(currNode);
@@ -63,15 +70,20 @@ namespace Finders
                     }
                 }
                 
+                yield return new WaitForSeconds(timeStep);
+                
                 _openSet.Remove(currNode);
                 _closedSet.Add(currNode);
-                
             }
 
-            if (currNode == goal) return Util.ReconstructPath(currNode);
+            if (currNode == goal)
+            {
+                Util.ReconstructPath(currNode, _foundPath);
+                Util.DrawPath(_foundPath);
+            }
         
             Debug.LogError("It was not possible to find a path!");
-            return null;
+            yield return null;
         }
     }
 }
