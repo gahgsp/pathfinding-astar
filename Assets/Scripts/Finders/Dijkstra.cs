@@ -11,8 +11,7 @@ namespace Finders
 
       public static IEnumerator FindPath(GameObject[,] nodes, Node start, Node goal, float timeStep)
       {
-         _unexploredSet = new PriorityQueue<Node>(Comparer<Node>.Create(((aNode, bNode) =>
-            aNode.TotalCost < bNode.TotalCost ? -1 : aNode.TotalCost > bNode.TotalCost ? 1 : 0)));
+         _unexploredSet = new PriorityQueue<Node>(DijkstraComparer());
 
          for (var cols = 0; cols < 10; cols++)
          {
@@ -67,6 +66,12 @@ namespace Finders
         
          Debug.LogError("It was not possible to find a path!");
          yield return null;
+      }
+
+      private static Comparer<Node> DijkstraComparer()
+      {
+         return Comparer<Node>.Create((aNode, bNode) =>
+            aNode.TotalCost < bNode.TotalCost ? -1 : aNode.TotalCost > bNode.TotalCost ? 1 : 0);
       }
    }
 }

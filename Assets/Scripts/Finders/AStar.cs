@@ -20,8 +20,7 @@ namespace Finders
         public static IEnumerator FindPath(Node start, Node goal, float timeStep)
         {
             // Initializing the sets
-            _openSet = new PriorityQueue<Node>(Comparer<Node>.Create(((aNode, bNode) =>
-                aNode.EstimatedCost < bNode.EstimatedCost ? -1 : aNode.EstimatedCost > bNode.EstimatedCost ? 1 : 0)));
+            _openSet = new PriorityQueue<Node>(AStarComparer());
             _closedSet = new HashSet<Node>();
         
             // Calculates the start node values and add to the open set
@@ -35,7 +34,7 @@ namespace Finders
                 currNode = _openSet.Peek();
                 currNode.IsFinished = true;
 
-                    if (currNode == goal)
+                if (currNode == goal)
                 {
                     Util.ReconstructPath(currNode);
                     yield break;
@@ -72,6 +71,12 @@ namespace Finders
         
             Debug.LogError("It was not possible to find a path!");
             yield return null;
+        }
+
+        private static Comparer<Node> AStarComparer()
+        {
+            return Comparer<Node>.Create((aNode, bNode) =>
+                aNode.EstimatedCost < bNode.EstimatedCost ? -1 : aNode.EstimatedCost > bNode.EstimatedCost ? 1 : 0);
         }
     }
 }

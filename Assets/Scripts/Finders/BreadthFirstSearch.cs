@@ -24,7 +24,6 @@ namespace Finders
                 currentNode = _openSet.Dequeue();
                 currentNode.IsFinished = true;
                 
-
                 if (currentNode == goal)
                 {
                     Util.ReconstructPath(currentNode);
