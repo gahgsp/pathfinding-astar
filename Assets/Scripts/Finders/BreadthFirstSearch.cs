@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Finders
 {
+    /// <summary>
+    /// This class is responsible for keeping the methods and algorithms responsible for calculating and finding
+    /// the most optimized path according to the Breadth First Search algorithm.
+    /// Based upon: https://en.wikipedia.org/wiki/Breadth-first_search
+    /// </summary>
     public static class BreadthFirstSearch
     {
         private static HashSet<Node> _discoveredSet;

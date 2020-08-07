@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Finders
 {
+   /// <summary>
+   /// This class is responsible for keeping the methods and algorithms responsible for calculating and finding
+   /// the most optimized path according to the Dijkstra algorithm.
+   /// Based upon: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+   /// </summary>
    public static class Dijkstra
    {
       private static PriorityQueue<Node> _unexploredSet;

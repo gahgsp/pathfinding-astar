@@ -8,6 +8,7 @@ namespace Finders
     /// <summary>
     /// This class is responsible for keeping the methods and algorithms responsible for calculating and finding
     /// the most optimized path according to the A* pathfinding algorithm.
+    /// Based upon: https://en.wikipedia.org/wiki/A*_search_algorithm
     /// </summary>
     public static class AStar
     {
