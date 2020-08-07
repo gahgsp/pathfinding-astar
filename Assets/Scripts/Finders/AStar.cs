@@ -33,12 +33,9 @@ namespace Finders
             while (_openSet.Length != 0)
             {
                 currNode = _openSet.Peek();
-                if (currNode != start && currNode != goal)
-                {
-                    currNode.IsFinished = true;
-                }
-            
-                if (currNode == goal)
+                currNode.IsFinished = true;
+
+                    if (currNode == goal)
                 {
                     Util.ReconstructPath(currNode);
                     yield break;
@@ -58,10 +55,7 @@ namespace Finders
                         {
                             _openSet.Enqueue(neighbor);
                         }
-                        if (neighbor != start && neighbor != goal)
-                        {
-                            neighbor.IsVisited = true;
-                        }
+                        neighbor.IsVisited = true;
                     }
                 }
                 

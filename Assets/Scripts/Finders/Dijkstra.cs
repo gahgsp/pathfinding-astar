@@ -35,11 +35,8 @@ namespace Finders
                yield break;
             }
             
-            if (currentNode != start && currentNode != goal)
-            {
-               currentNode.IsFinished = true;
-            }
-            
+            currentNode.IsFinished = true;
+
             var neighbors = GridManager.Instance.GetNeighborsNodes(currentNode);
             for (var i = 0; i < neighbors.Count; i++)
             {
@@ -51,10 +48,7 @@ namespace Finders
                   {
                      neighbor.TotalCost = potentialCost;
                      neighbor.Parent = currentNode;
-                     if (neighbor != start && neighbor != goal)
-                     {
-                        neighbor.IsVisited = true;
-                     }
+                     neighbor.IsVisited = true;
                   }
                } 
             }

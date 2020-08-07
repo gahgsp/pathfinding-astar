@@ -9,10 +9,15 @@ namespace Core
     public class Node : MonoBehaviour, IComparable<Node>
     {
 
+        [Header("// Node Materials")]
         [SerializeField] private Material _visitedMaterial;
         [SerializeField] private Material _finishedMaterial;
 
+        // Cached references.
         private MeshRenderer _meshRenderer;
+
+        private bool _isVisited;
+        private bool _isFinished;
 
         private void Start()
         {
@@ -21,10 +26,10 @@ namespace Core
 
         private void Update()
         {
-            if (IsFinished)
+            if (_isFinished)
             {
                 _meshRenderer.material = _finishedMaterial;
-            } else if (IsVisited)
+            } else if (_isVisited)
             {
                 _meshRenderer.material = _visitedMaterial;
             }
@@ -57,11 +62,29 @@ namespace Core
         public bool IsObstacle { get; private set; }
 
         public bool IsDiagonalNeighbor { get; set; }
-    
-        public bool IsVisited { get; set; }
-    
-        public bool IsFinished { get; set; }
-        
+
+        public bool IsVisited
+        {
+            set
+            {
+                if (!IsStartNode() && !IsGoalNode())
+                {
+                    _isVisited = value;
+                }
+            }
+        }
+
+        public bool IsFinished
+        {
+            set
+            {
+                if (!IsStartNode() && !IsGoalNode())
+                {
+                    _isFinished = value;
+                }
+            }
+        }
+
         public int CompareTo(Node other)
         {
             return EstimatedCost < other.EstimatedCost ? -1 : EstimatedCost > other.EstimatedCost ? 1 : 0;

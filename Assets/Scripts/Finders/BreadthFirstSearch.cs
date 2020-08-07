@@ -22,10 +22,8 @@ namespace Finders
             while (_openSet.Count > 0)
             {
                 currentNode = _openSet.Dequeue();
-                if (currentNode != start && currentNode != goal)
-                {
-                    currentNode.IsFinished = true;
-                }
+                currentNode.IsFinished = true;
+                
 
                 if (currentNode == goal)
                 {
@@ -42,10 +40,7 @@ namespace Finders
                         _discoveredSet.Add(neighbor);
                         neighbor.Parent = currentNode;
                         _openSet.Enqueue(neighbor);
-                        if (neighbor != start && neighbor != goal)
-                        {
-                            neighbor.IsVisited = true;
-                        }
+                        neighbor.IsVisited = true;
                     }
                 }
                 
