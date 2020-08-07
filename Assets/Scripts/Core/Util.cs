@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace Core
 {
@@ -19,13 +18,13 @@ namespace Core
         
         private static void DrawPath(List<Node> foundPath)
         {
-            foreach (var node in foundPath)
+            for (var i = 0; i < foundPath.Count; i++)
             {
-                if (!node.IsStartNode() && !node.IsGoalNode())
+                if (!foundPath[i].IsStartNode() && !foundPath[i].IsGoalNode())
                 {
-                    node.IsVisited = false;
-                    node.IsFinished = false;
-                    node.GetComponent<MeshRenderer>().material = GridManager.Instance.PathMaterial;
+                    foundPath[i].IsVisited = false;
+                    foundPath[i].IsFinished = false;
+                    foundPath[i].IsBestPath = true;
                 }
             }
         }

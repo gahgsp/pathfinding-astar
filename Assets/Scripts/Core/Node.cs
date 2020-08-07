@@ -10,14 +10,21 @@ namespace Core
     {
 
         [Header("// Node Materials")]
+        [SerializeField] private Material _nodeMaterial;
+        [SerializeField] private Material _startMaterial;
+        [SerializeField] private Material _goalMaterial;
+        [SerializeField] private Material _pathMaterial;
+        [SerializeField] private Material _obstacleMaterial;
         [SerializeField] private Material _visitedMaterial;
         [SerializeField] private Material _finishedMaterial;
-
+        
         // Cached references.
         private MeshRenderer _meshRenderer;
 
+        private bool _isObstacle;
         private bool _isVisited;
         private bool _isFinished;
+        private bool _isBestPath;
 
         private void Start()
         {
@@ -26,21 +33,43 @@ namespace Core
 
         private void Update()
         {
+            if (_isBestPath)
+            {
+                _meshRenderer.material = _pathMaterial;
+                return;
+            }
+
+            if (_isObstacle)
+            {
+                _meshRenderer.material = _obstacleMaterial;
+                return;
+            }
+
             if (_isFinished)
             {
                 _meshRenderer.material = _finishedMaterial;
-            } else if (_isVisited)
+                return;
+            }
+
+            if (_isVisited)
             {
                 _meshRenderer.material = _visitedMaterial;
+                return;
             }
-        }
 
-        /// <summary>
-        /// Marks the Node as an obstacle, so this Node isn't accountable for the pathfinding algorithm.
-        /// </summary>
-        public void DefineNodeAsObstacle()
-        {
-            IsObstacle = true;
+            if (IsStartNode())
+            {
+                _meshRenderer.material = _startMaterial;
+                return;
+            }
+
+            if (IsGoalNode())
+            {
+                _meshRenderer.material = _goalMaterial;
+                return;
+            }
+
+            _meshRenderer.material = _nodeMaterial;
         }
         
         public bool IsStartNode()
@@ -59,7 +88,16 @@ namespace Core
 
         public Node Parent { get; set; }
 
-        public bool IsObstacle { get; private set; }
+        public bool IsObstacle
+        {
+            get => _isObstacle;
+            set => _isObstacle = value;
+        }
+
+        public bool IsBestPath
+        {
+            set => _isBestPath = value;
+        }
 
         public bool IsDiagonalNeighbor { get; set; }
 

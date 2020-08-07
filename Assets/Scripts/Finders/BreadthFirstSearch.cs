@@ -7,7 +7,6 @@ namespace Finders
 {
     public static class BreadthFirstSearch
     {
-
         private static HashSet<Node> _discoveredSet;
         private static Queue<Node> _openSet;
         

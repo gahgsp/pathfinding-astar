@@ -17,17 +17,8 @@ public class GridManager : MonoBehaviour
     [Header("// Node")]
     [SerializeField] private GameObject _node;
     
-    [Header("// Path Materials")]
-    [SerializeField] private Material _startMaterial;
-    [SerializeField] private Material _goalMaterial;
-    [SerializeField] private Material _pathMaterial;
-    [SerializeField] private Material _obstacleMaterial;
-    
-    public Material PathMaterial => _pathMaterial;
-    
     // Private properties.
     private GameObject[,] _nodes;
-    private bool _isSelectingStartPoint = true;
     private bool _allowDiagonals = false;
     private int _algorithmOption = 0;
 
@@ -173,7 +164,6 @@ public class GridManager : MonoBehaviour
     public void ResetPath()
     {
         ResetGrid();
-        _isSelectingStartPoint = true;
     }
     
     /// <summary>
@@ -212,6 +202,9 @@ public class GridManager : MonoBehaviour
             CreateStartPoint();
         } else if (Input.GetMouseButtonDown(1))
         {
+            CreateGoalPoint();
+        } else if (Input.GetMouseButtonDown(2))
+        {
             CreateObstacleNode();
         }
     }
@@ -224,23 +217,42 @@ public class GridManager : MonoBehaviour
         var clickedNode = RetrieveClickedNode();
         if (clickedNode != null)
         {
-            clickedNode.GetComponent<Node>().DefineNodeAsObstacle();
-            clickedNode.GetComponent<MeshRenderer>().material = _obstacleMaterial;
+            clickedNode.GetComponent<Node>().IsObstacle = true;
         }
     }
 
     /// <summary>
-    /// Creates the starting and goal points when the user clicks on a Node.
+    /// Creates the starting point when the user clicks on a Node.
     /// </summary>
     private void CreateStartPoint()
     {
         var clickedNode = RetrieveClickedNode();
-        if (clickedNode != null)
+        if (clickedNode == null) return;
+        
+        var previousStartNode = GameObject.FindGameObjectWithTag("Start")?.GetComponent<Node>();
+        if (previousStartNode != null)
         {
-            clickedNode.GetComponent<MeshRenderer>().material = _isSelectingStartPoint ? _startMaterial : _goalMaterial;
-            clickedNode.tag = _isSelectingStartPoint ? "Start" : "Goal";
-            _isSelectingStartPoint = false;
+            previousStartNode.tag = "Untagged";
         }
+
+        clickedNode.tag = "Start";
+    }
+
+    /// <summary>
+    /// Creates the goal point when the user clicks on a Node.
+    /// </summary>
+    private void CreateGoalPoint()
+    {
+        var clickedNode = RetrieveClickedNode();
+        if (clickedNode == null) return; 
+        
+        var previousGoalNode = GameObject.FindGameObjectWithTag("Goal")?.GetComponent<Node>();
+        if (previousGoalNode != null)
+        {
+            previousGoalNode.tag = "Untagged";
+        }
+
+        clickedNode.tag = "Goal";
     }
 
     /// <summary>
