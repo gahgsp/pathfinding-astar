@@ -18,9 +18,9 @@ namespace Finders
       {
          _unexploredSet = new PriorityQueue<Node>(DijkstraComparer());
 
-         for (var cols = 0; cols < 10; cols++)
+         for (var cols = 0; cols < 20; cols++)
          {
-            for (var rows = 0; rows < 10; rows++)
+            for (var rows = 0; rows < 20; rows++)
             {
                var currentNodeScript = nodes[cols, rows].GetComponent<Node>();
                currentNodeScript.TotalCost = currentNodeScript == start ? 0f : float.PositiveInfinity;
@@ -47,7 +47,7 @@ namespace Finders
                var neighbor = neighbors[i];
                if (!neighbor.IsObstacle && _unexploredSet.Contains(neighbor))
                {
-                  var potentialCost = currentNode.TotalCost + Heuristic.Manhattan(currentNode, neighbor);
+                  var potentialCost = currentNode.TotalCost + (neighbor.IsDiagonalNeighbor ? 1 : 2);
                   if (potentialCost < neighbor.TotalCost)
                   {
                      neighbor.TotalCost = potentialCost;

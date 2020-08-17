@@ -742,13 +742,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d74ba1ad9d783a4c9268f5c3f6244f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _length: 10
-  _width: 10
+  _length: 20
+  _width: 20
+  _timeStep: 0.1
   _node: {fileID: 6425992594830817534, guid: ed77e8c9c248d994381011c100d13197, type: 3}
-  _startMaterial: {fileID: 2100000, guid: 89885fdeef9606544880713f8fd82f10, type: 2}
-  _goalMaterial: {fileID: 2100000, guid: b7d2d87dea6e07a4290dce2ca009095f, type: 2}
-  _pathMaterial: {fileID: 2100000, guid: 12da53b8c14de9d4f8016e22a304c331, type: 2}
-  _obstacleMaterial: {fileID: 2100000, guid: ab2e93842b25d9c41ae5b49253ab48bc, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1316,7 +1313,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 4, y: 10, z: 4.7}
+  m_LocalPosition: {x: 4, y: 20, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
